@@ -33,6 +33,7 @@ import {
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import axios, { AxiosInstance } from 'axios';
+import { appendFileSync } from 'fs';
 
 /**
  * Configuration from environment variables
@@ -60,14 +61,14 @@ const logger = {
     if (config.logFile) {
       const timestamp = new Date().toISOString();
       const logMessage = `[${timestamp}] ${message} ${args.map(a => JSON.stringify(a)).join(' ')}\n`;
-      require('fs').appendFileSync(config.logFile, logMessage);
+      appendFileSync(config.logFile, logMessage);
     }
   },
   error: (message: string, ...args: any[]) => {
     if (config.logFile) {
       const timestamp = new Date().toISOString();
       const logMessage = `[${timestamp}] ERROR: ${message} ${args.map(a => JSON.stringify(a)).join(' ')}\n`;
-      require('fs').appendFileSync(config.logFile, logMessage);
+      appendFileSync(config.logFile, logMessage);
     }
   },
 };
