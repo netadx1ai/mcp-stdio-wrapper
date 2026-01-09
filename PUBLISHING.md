@@ -1,324 +1,428 @@
 # Publishing Guide - @netadx1ai/mcp-stdio-wrapper
 
+Official guide for publishing updates to the NetADX MCP Stdio Wrapper package.
+
+## Quick Publish (For Maintainers)
+
+```bash
+# 1. Build and bump version
+npm run build
+npm version patch  # or minor/major
+
+# 2. Publish to npm
+npm publish --access public
+
+# 3. Push to GitHub
+git push origin main --tags
+```
+
 ## Prerequisites
 
-1. **npm Account**: Create account at https://www.npmjs.com/signup
-2. **Organization Access**: Must be member of `@netadx1ai` organization on npm
-3. **Node.js 18+**: Installed locally
+### Required Access
 
-## First Time Setup
+- **npm Account**: Member of `@netadx1ai` organization
+- **GitHub Access**: Write access to https://github.com/netadx1ai/mcp-stdio-wrapper
+- **Node.js**: Version 18.0.0 or higher
 
-### 1. Create npm Organization (if not exists)
+### Authentication Setup
+
+#### npm Authentication
 
 ```bash
 # Login to npm
 npm login
 
-# Create organization (one-time)
-# Go to: https://www.npmjs.com/org/create
-# Organization name: netadx1ai
-# Make it PUBLIC (not private)
+# Verify access
+npm whoami
+npm access list packages @netadx1ai
 ```
 
-### 2. Add Team Members
+#### GitHub Authentication
 
 ```bash
-# Go to: https://www.npmjs.com/settings/netadx1ai/members
-# Add team members who can publish
+# Verify git remote
+git remote -v
+
+# Should show:
+# origin  https://github.com/netadx1ai/mcp-stdio-wrapper (fetch)
+# origin  https://github.com/netadx1ai/mcp-stdio-wrapper (push)
 ```
 
-## Publishing Steps
+## Publishing Workflow
 
-### 1. Pre-publish Checks
+### 1. Pre-Release Checklist
+
+Before publishing, ensure:
+
+- [ ] All tests pass: `npm test` (if tests exist)
+- [ ] Build succeeds: `npm run build`
+- [ ] Code is committed: `git status` shows clean
+- [ ] On main branch: `git branch` shows `* main`
+- [ ] Up to date: `git pull origin main`
+
+### 2. Update Version
+
+Choose semantic versioning based on changes:
 
 ```bash
-cd /path/to/mcp-stdio-wrapper
+# Patch release (bug fixes): 2.1.5 → 2.1.6
+npm version patch
 
-# 1. Clean install
-rm -rf node_modules package-lock.json
-npm install
+# Minor release (new features): 2.1.5 → 2.2.0
+npm version minor
 
-# 2. Build TypeScript
+# Major release (breaking changes): 2.1.5 → 3.0.0
+npm version major
+```
+
+This automatically:
+- Updates `package.json` version
+- Creates a git commit
+- Creates a git tag
+
+### 3. Build Package
+
+```bash
+# Clean build
 npm run build
 
-# 3. Verify dist/ was created
+# Verify dist directory
 ls -la dist/
-
-# 4. Check package.json
-cat package.json | grep -E "(name|version|main|bin)"
-
-# Expected output:
-# "name": "@netadx1ai/mcp-stdio-wrapper"
-# "version": "2.1.0"
-# "main": "dist/index.js"
-# "bin": { "mcp-netadx-api": "./dist/index.js" }
+# Should contain: index.js, index.d.ts, and map files
 ```
 
-### 2. Test Package Locally
+### 4. Test Package Locally (Optional)
 
 ```bash
-# Test that the built package works
+# Create tarball
 npm pack
 
-# This creates: netadx1ai-mcp-stdio-wrapper-2.1.0.tgz
-# Install it locally to test:
-npm install -g ./netadx1ai-mcp-stdio-wrapper-2.1.0.tgz
+# Install globally for testing
+npm install -g ./netadx1ai-mcp-stdio-wrapper-*.tgz
 
 # Test the binary
-which mcp-netadx-api
-mcp-netadx-api --help  # Should start the server (will fail without env vars - that's OK)
+mcp-netadx-api
+# Should error with "JWT_TOKEN environment variable is required" - this is correct!
 
-# Clean up test
+# Cleanup
 npm uninstall -g @netadx1ai/mcp-stdio-wrapper
-rm netadx1ai-mcp-stdio-wrapper-2.1.0.tgz
+rm netadx1ai-mcp-stdio-wrapper-*.tgz
 ```
 
-### 3. Login to npm
+### 5. Publish to npm
 
 ```bash
-npm login
+# Dry run (preview what will be published)
+npm publish --dry-run --access public
 
-# You'll be prompted:
-# Username: your-npm-username
-# Password: ***
-# Email: your-email@example.com
-# OTP (if 2FA enabled): 123456
-
-# Verify login
-npm whoami
-# Should show your npm username
-```
-
-### 4. Publish to npm
-
-```bash
-# Dry run first (see what will be published)
-npm publish --dry-run
-
-# Review output - should show:
-# - package.json
-# - dist/index.js
-# - dist/index.d.ts
-# - README.md
-# - LICENSE
-
-# Publish for real (PUBLIC)
+# Review the file list, then publish
 npm publish --access public
-
-# Expected output:
-# + @netadx1ai/mcp-stdio-wrapper@2.1.0
 ```
 
-### 5. Verify Publication
+Expected output:
+```
++ @netadx1ai/mcp-stdio-wrapper@2.1.6
+```
+
+### 6. Push to GitHub
 
 ```bash
-# Check on npm website
-open https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper
+# Push commits and tags
+git push origin main
+git push origin --tags
+```
 
-# Or check via CLI
+### 7. Verify Publication
+
+```bash
+# Check npm
 npm view @netadx1ai/mcp-stdio-wrapper
 
-# Test installation globally
-npm install -g @netadx1ai/mcp-stdio-wrapper@latest
-
-# Test with npx (no install)
+# Test installation
 npx @netadx1ai/mcp-stdio-wrapper@latest
-# Should fail with "JWT_TOKEN environment variable is required" - that's correct!
 ```
 
-## Publishing Updates
+Visit the package page:
+- npm: https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper
+- GitHub: https://github.com/netadx1ai/mcp-stdio-wrapper
 
-### Patch Release (2.1.0 → 2.1.1)
+## Package Configuration
 
+### What Gets Published
+
+Files included (defined in `package.json`):
+- `dist/` - Compiled JavaScript and TypeScript definitions
+- `README.md` - Package documentation
+- `LICENSE` - MIT license file
+
+Files excluded (defined in `.npmignore`):
+- `src/` - Source TypeScript files
+- `node_modules/` - Dependencies
+- `.git/` - Git metadata
+- `tsconfig.json` - TypeScript configuration
+
+### Package Metadata
+
+```json
+{
+  "name": "@netadx1ai/mcp-stdio-wrapper",
+  "version": "2.1.5",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mcp-netadx-api": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
+```
+
+## Versioning Strategy
+
+### Semantic Versioning (SemVer)
+
+Format: `MAJOR.MINOR.PATCH`
+
+**Patch** (2.1.5 → 2.1.6)
+- Bug fixes
+- Documentation updates
+- Performance improvements
+- No API changes
+
+**Minor** (2.1.5 → 2.2.0)
+- New features
+- New functionality
+- Backward compatible changes
+- New environment variables (optional)
+
+**Major** (2.1.5 → 3.0.0)
+- Breaking changes
+- Removed features
+- Changed API behavior
+- Required environment variable changes
+
+### Version Changelog
+
+Update README.md changelog section after each release:
+
+```markdown
+## Changelog
+
+**Version 2.1.6**
+- Updated contact information to hello@netadx.ai
+- Fixed repository URLs to standalone repo
+- Improved error handling
+
+**Version 2.1.5**
+- Previous changes...
+```
+
+## Troubleshooting
+
+### Common Errors
+
+#### "You cannot publish over the previously published versions"
+
+**Problem**: Version already exists on npm
+
+**Solution**:
 ```bash
-# Bug fixes only
+# Bump version again
 npm version patch
 npm publish --access public
 ```
 
-### Minor Release (2.1.0 → 2.2.0)
+#### "You do not have permission to publish"
 
+**Problem**: Not a member of `@netadx1ai` organization
+
+**Solution**: Contact NetADX Team (hello@netadx.ai) for access
+
+#### "prepublishOnly script failed"
+
+**Problem**: Build failed
+
+**Solution**:
 ```bash
-# New features, backward compatible
-npm version minor
-npm publish --access public
-```
-
-### Major Release (2.1.0 → 3.0.0)
-
-```bash
-# Breaking changes
-npm version major
-npm publish --access public
-```
-
-## Making the Package Public
-
-The package is **already configured as public**:
-
-1. **package.json** includes:
-   ```json
-   "publishConfig": {
-     "access": "public"
-   }
-   ```
-
-2. **License**: MIT (open source)
-
-3. **Repository**: Public GitHub (when pushed)
-
-4. **npm publish**: Uses `--access public` flag
-
-### Why Public?
-
-✅ **Anyone can use it** - `npx @netadx1ai/mcp-stdio-wrapper@latest`  
-✅ **No npm subscription needed** - Free public packages  
-✅ **Better for community** - Open source MCP wrapper  
-✅ **Claude Desktop compatible** - Works via npx  
-
-### If You Want Private Instead
-
-To make it private (requires npm Pro/Teams):
-
-```json
-// package.json
-"publishConfig": {
-  "access": "restricted"  // Change from "public"
-}
-```
-
-Then publish:
-```bash
-npm publish --access restricted
-```
-
-**Cost**: ~$7/month per user for private packages
-
-## Troubleshooting
-
-### Error: "You must sign in to publish packages"
-
-```bash
-npm login
-# Follow prompts
-```
-
-### Error: "You do not have permission to publish @netadx1ai/mcp-stdio-wrapper"
-
-**Solution**: You need to be added to the `@netadx1ai` organization.
-
-Ask organization owner to:
-1. Go to https://www.npmjs.com/settings/netadx1ai/members
-2. Add your npm username as member
-
-### Error: "Package name too similar to existing packages"
-
-**Solution**: npm thinks the name is too similar to another package.
-
-Options:
-1. Use different name: `@netadx1ai/netadx-mcp-wrapper`
-2. Contact npm support if you believe it's unique
-
-### Error: "prepublishOnly script failed"
-
-```bash
-# The build failed
+# Check TypeScript errors
 npm run build
 
-# Check TypeScript errors
+# Fix any TypeScript errors in src/
+# Then try publishing again
+```
+
+#### "Git working directory not clean"
+
+**Problem**: Uncommitted changes
+
+**Solution**:
+```bash
+# Commit changes first
+git add .
+git commit -m "Your commit message"
+
+# Then bump version
+npm version patch
+```
+
+#### "Authentication failed"
+
+**Problem**: Not logged in to npm
+
+**Solution**:
+```bash
+npm login
+# Enter credentials
+npm whoami  # Verify
+```
+
+### Build Issues
+
+```bash
+# Clean everything and rebuild
+rm -rf dist/ node_modules/ package-lock.json
+npm install
+npm run build
+```
+
+### Test Before Publishing
+
+```bash
+# Lint check (if configured)
+npm run lint
+
+# Type check
 npx tsc --noEmit
+
+# Dry run publish
+npm publish --dry-run
 ```
 
-### Error: "402 Payment Required"
+## Rollback & Deprecation
 
-You're trying to publish a private package without paid plan.
-
-**Solution**: Either:
-1. Make it public: `npm publish --access public`
-2. Or upgrade to npm Pro: https://www.npmjs.com/products
-
-## Post-Publication
-
-### 1. Update GitHub README
-
-Add npm badge to main README:
-
-```markdown
-[![npm version](https://badge.fury.io/js/@netadx1ai%2Fmcp-stdio-wrapper.svg)](https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper)
-```
-
-### 2. Tag Git Release
+### Unpublish (Within 72 hours)
 
 ```bash
-git tag v2.1.0
-git push origin v2.1.0
+# Unpublish specific version (only if just published)
+npm unpublish @netadx1ai/mcp-stdio-wrapper@2.1.6
 ```
 
-### 3. Announce
+**Warning**: Can only unpublish within 72 hours of publication.
 
-Update documentation with installation instructions:
+### Deprecate (After 72 hours)
 
 ```bash
-# Now users can simply do:
-npx @netadx1ai/mcp-stdio-wrapper@latest
+# Mark version as deprecated
+npm deprecate @netadx1ai/mcp-stdio-wrapper@2.1.6 "Use version 2.1.7 instead"
+
+# Undeprecate if needed
+npm deprecate @netadx1ai/mcp-stdio-wrapper@2.1.6 ""
 ```
 
-## Maintenance
-
-### Check Download Stats
+### Publish Fixed Version
 
 ```bash
-# Via CLI
+# Fix the issue
+# ... make changes ...
+
+# Publish new version
+npm version patch
+npm publish --access public
+```
+
+## Security Best Practices
+
+### Enable Two-Factor Authentication
+
+```bash
+# Enable 2FA for login and publishing
+npm profile enable-2fa auth-and-writes
+```
+
+### Audit Dependencies
+
+```bash
+# Check for vulnerabilities
+npm audit
+
+# Fix automatically (if possible)
+npm audit fix
+
+# Review before publishing
+```
+
+### Token Management
+
+Never commit npm tokens to git:
+- Use environment variables
+- Use `.npmrc` (add to `.gitignore`)
+- Rotate tokens periodically
+
+## Monitoring
+
+### Package Statistics
+
+```bash
+# View package info
 npm view @netadx1ai/mcp-stdio-wrapper
 
-# Via web
-open https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper
+# Check download stats
+npm view @netadx1ai/mcp-stdio-wrapper downloads
 ```
 
-### Unpublish (if needed within 72 hours)
+### User Feedback
+
+Monitor for issues:
+- GitHub Issues: https://github.com/netadx1ai/mcp-stdio-wrapper/issues
+- npm page: https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper
+- Email: hello@netadx.ai
+
+## Maintenance Schedule
+
+### Regular Updates
+
+- **Weekly**: Check for dependency updates
+- **Monthly**: Review GitHub issues
+- **Quarterly**: Update documentation
+- **As needed**: Security patches
+
+### Dependency Updates
 
 ```bash
-# Unpublish specific version
-npm unpublish @netadx1ai/mcp-stdio-wrapper@2.1.0
+# Check outdated packages
+npm outdated
 
-# Unpublish entire package (use with caution!)
-npm unpublish @netadx1ai/mcp-stdio-wrapper --force
+# Update dependencies
+npm update
+
+# Test after updates
+npm run build
+npm test
 ```
 
-**Note**: After 72 hours, you can't unpublish. You can only deprecate:
+## Support & Contact
 
-```bash
-npm deprecate @netadx1ai/mcp-stdio-wrapper@2.1.0 "This version has a critical bug"
-```
+### Getting Help
 
-## Security
+- **Documentation**: https://github.com/netadx1ai/mcp-stdio-wrapper
+- **Issues**: https://github.com/netadx1ai/mcp-stdio-wrapper/issues
+- **Email**: hello@netadx.ai
+- **Website**: https://netadx.ai
 
-### Enable 2FA (Recommended)
+### For New Maintainers
 
-```bash
-npm profile enable-2fa auth-and-writes
+To request publishing access:
 
-# This requires OTP for:
-# - npm login
-# - npm publish
-```
-
-### Audit Package
-
-```bash
-npm audit
-npm audit fix
-```
-
-## Support
-
-- **npm Docs**: https://docs.npmjs.com/
-- **Publishing Guide**: https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry
-- **Scoped Packages**: https://docs.npmjs.com/cli/v8/using-npm/scope
+1. Contact NetADX Team at hello@netadx.ai
+2. Provide your npm username
+3. Provide your GitHub username
+4. Wait for organization invite
+5. Accept invite and follow this guide
 
 ---
 
-**Package**: @netadx1ai/mcp-stdio-wrapper  
-**Registry**: https://www.npmjs.com/package/@netadx1ai/mcp-stdio-wrapper  
-**License**: MIT (Public)  
-**Author**: NetADX Team
+**Maintained by:** NetADX Team  
+**Contact:** hello@netadx.ai  
+**Website:** https://netadx.ai  
+**Last Updated:** 2025-01-09
