@@ -48,11 +48,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/netadx1ai/netadx-workspace.git",
-    "directory": "development/mcp-stdio-wrapper"
+    "url": "https://github.com/netadx1ai/mcp-stdio-wrapper.git"
   },
   "bugs": {
-    "url": "https://github.com/netadx1ai/netadx-workspace/issues"
+    "url": "https://github.com/netadx1ai/mcp-stdio-wrapper/issues"
   },
-  "homepage": "https://github.com/netadx1ai/netadx-workspace/tree/main/development/mcp-stdio-wrapper#readme"
+  "homepage": "https://github.com/netadx1ai/mcp-stdio-wrapper#readme"
 }
