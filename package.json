@@ -29,7 +29,7 @@
     "stdio",
     "api-wrapper"
   ],
-  "author": "NetADX AI-CORE Team <aikuviet@gmail.com>",
+  "author": "NetADX Team <hello@netadx.ai>",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

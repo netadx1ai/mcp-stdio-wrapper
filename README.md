@@ -298,7 +298,8 @@ npm publish --access public
 
 - Issues: [GitHub Issues](https://github.com/netadx1ai/netadx-workspace/issues)
 - Documentation: [NetADX AI-CORE Documentation](https://github.com/netadx1ai/netadx-workspace)
-- Email: aikuviet@gmail.com
+- Email: hello@netadx.ai
+- Website: https://netadx.ai
 
 ## License
 
@@ -322,5 +323,7 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Author**: NetADX AI-CORE Team  
-**Last Updated**: 2025-10-31
+**Maintained by:** NetADX Team  
+**Contact:** hello@netadx.ai  
+**Website:** https://netadx.ai  
+**Last Updated**: 2025-01-09
