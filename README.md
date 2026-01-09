@@ -296,8 +296,8 @@ npm publish --access public
 
 ## Support
 
-- Issues: [GitHub Issues](https://github.com/netadx1ai/netadx-workspace/issues)
-- Documentation: [NetADX AI-CORE Documentation](https://github.com/netadx1ai/netadx-workspace)
+- Issues: [GitHub Issues](https://github.com/netadx1ai/mcp-stdio-wrapper/issues)
+- Documentation: [NetADX MCP Stdio Wrapper Documentation](https://github.com/netadx1ai/mcp-stdio-wrapper)
 - Email: hello@netadx.ai
 - Website: https://netadx.ai
 
