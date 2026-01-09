@@ -1,6 +1,6 @@
 {
   "name": "@netadx1ai/mcp-stdio-wrapper",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "NetADX AI-CORE MCP stdio wrapper - enables Claude Desktop integration with HTTP-based MCP servers",
   "type": "module",
   "main": "dist/index.js",
